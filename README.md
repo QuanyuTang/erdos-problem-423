@@ -20,4 +20,5 @@ Define the “excess” $b_n := a_n - n$. The note proves:
 ## Files
 
 - `On_Erdős_Problem_423.pdf`.
+- LaTeX source.
 
