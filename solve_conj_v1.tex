@@ -1,0 +1,395 @@
+\documentclass[11pt,letterpaper,reqno]{amsart}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric, arrows.meta, calc, positioning}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{enumitem} 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} 
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{doi}
+\usepackage{float} 
+\usepackage{comment} 
+\addtolength{\hoffset}{-1.5cm}\addtolength{\textwidth}{3cm}
+\addtolength{\voffset}{-1cm}\addtolength{\textheight}{2cm}
+
+\usepackage{bookmark}
+\usepackage{hyperref}
+\hypersetup{pdfstartview={FitH}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\abs}[1]{| #1 |}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\tr}{\operatorname{Tr}}
+\DeclareMathOperator{\rank}{rank}
+
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\numberwithin{equation}{section}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\taufunc}{\tau}
+\newcommand{\omegap}{\omega}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\R}{\mathbb{R}}        % real numbers
+\newcommand{\E}{\mathbb{E}}        % expectation
+\newcommand{\Var}{\mathrm{Var}}    % variance
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\PP}{\mathbb{P}}     % probability
+\newcommand{\eps}{\varepsilon}     % epsilon
+\newcommand{\ind}{\mathbf{1}}      % indicator function
+\newcommand{\seq}[1]{\left(#1\right)} % sequence
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
+\makeatother
+
+
+\begin{document}
+
+\title[The self-generating consecutive-sum sequence]{A note on the self-generating consecutive-sum greedy sequence}
+
+
+\author[Quanyu Tang]{Quanyu Tang}
+\address{School of Mathematics and Statistics, Xi'an Jiaotong University, Xi'an 710049, P. R. China}
+\email{tang\_quanyu@163.com}
+
+\date{\today}
+% \subjclass[2020]{xxx}
+
+% \keywords{xxx}
+
+\begin{abstract}
+Let $(a_n)_{n \geq 1}$ be the greedy self-generating sequence with $a_1=1$, $a_2=2$, and for
+$k\ge3$ let $a_k$ be the least integer $>a_{k-1}$ that can be written as a sum of
+at least two consecutive earlier terms.  Writing $b_n:=a_n-n$, we prove that
+$(b_n)_{n \geq 1}$ is nondecreasing and unbounded. In particular, the sequence omits
+infinitely many positive integers, settling a conjecture recorded in the OEIS entry A005243.
+\end{abstract}
+
+
+
+\maketitle
+
+
+\section{Introduction}
+
+A \emph{self-generating} process introduced by Hofstadter starts from $1,2$ and
+repeatedly adjoins all sums of at least two consecutive previous terms.
+Equivalently, one may define a strictly increasing sequence $(a_n)_{n\ge1}$ by
+$a_1=1$, $a_2=2$, and for each $k\ge3$ letting $a_k$ be the least integer
+$a_k>a_{k-1}$ admitting a representation
+\[
+a_k=\sum_{i=p}^{q} a_i
+\qquad\text{for some }1\le p\le q\le k-1,\ \ q-p+1\ge2.
+\]
+This is OEIS \seqnum{A005243}. In \cite[p.~71]{Er77c}, \cite[p.~83]{ErGr80}, and
+\cite[E31]{Gu04}, Hofstadter asked the following question (although Erd\H{o}s notes in
+\cite{Er77c} that the question is originally due to Ulam); it also appears as
+Problem~\#423 on Bloom's Erd\H{o}s Problems website~\cite{EP}.
+
+\begin{problem}\label{prob:1}
+Let $a_1=1$ and $a_2=2$, and for $k\ge 3$ choose $a_k$ to be the least integer
+$>a_{k-1}$ that is the sum of at least two consecutive earlier terms of the
+sequence. What is the asymptotic behaviour of $(a_n)_{n\ge1}$?
+\end{problem}
+
+Empirically, most integers occur. However, a conjecture recorded since 2006 in
+the \emph{COMMENTS} section of OEIS \seqnum{A005243} asserts that the sequence has
+infinitely many \emph{nonmembers}.
+
+\begin{conjecture}\label{conj:1}
+There are infinitely many positive integers that never appear in the sequence
+$(a_n)_{n\ge1}$.
+\end{conjecture}
+
+The main purpose of this note is to prove Conjecture~\ref{conj:1} by establishing
+the following theorem.
+
+\begin{theorem}\label{thm:main}
+With $(a_n)_{n\ge1}$ as above and $b_n:=a_n-n$, the sequence $(b_n)_{n\ge1}$ is nondecreasing and
+unbounded. Consequently, the set $\{a_n:n\ge1\}$ omits infinitely many positive integers.
+\end{theorem}
+
+\begin{remark}\label{rem:asymptotics}
+In particular, Theorem~\ref{thm:main} yields a qualitative step toward
+Problem~\ref{prob:1}: unboundedness of $b_n$ rules out eventual linearity
+$a_n=n+B$ for all sufficiently large $n$. However, it does not by itself
+determine the growth rate of $b_n$; for instance, it remains compatible with
+$b_n=o(n)$.
+\end{remark}
+
+
+\section{Preliminaries}
+
+The following result is standard; see~\cite[Corollary~1]{SchinzelTijdeman1976}.
+
+\begin{lemma}[\cite{SchinzelTijdeman1976}]\label{lem:schinzel-tijdeman}
+If a polynomial $P(x)\in\mathbb Q[x]$ has at
+least two simple zeros, then the equation\[
+y^m=P(x), \quad x,y \text{ integers},\quad |y|>1,
+\]has only finitely many integer solutions $m,x,y$ with $m>2$, $|y|>1$ and these solutions can be found effectively.
+\end{lemma}
+
+As a direct consequence , we obtain the following.
+\begin{proposition}\label{prop:finite-dioph}
+Fix $E\in\mathbb Z$. Then the equation
+\[
+v^2+v+E=2^m
+\]
+has only finitely many integer solutions $(v,m)\in\mathbb Z\times\mathbb Z_{>2}$.
+\end{proposition}
+\begin{proof}
+Apply Lemma~\ref{lem:schinzel-tijdeman} to $P(v)=v^2+v+E$ and $y=2$.
+The discriminant of $P$ is $1-4E\neq0$ for $E\in\mathbb Z$, hence $P$ has two simple zeros, so the lemma applies.
+\end{proof}
+
+
+
+
+\begin{lemma}\label{lem:consecutive-iff-not-2power}
+A positive integer $N\geq 3$ is a sum of at least two consecutive positive integers
+if and only if $N$ is not a power of $2$.
+\end{lemma}
+
+\begin{proof}
+If $N=x+(x+1)+\cdots+(x+\ell-1)$ with $\ell\ge2$, then
+\[
+2N=\ell(2x+\ell-1).
+\]
+If $\ell$ is odd, then $\ell\mid 2N$ implies $\ell\mid N$, and $\ell>1$ is an odd
+divisor of $N$, so $N$ is not a power of $2$.
+If $\ell$ is even, then $2x+\ell-1$ is odd and $>1$ and divides $2N$, hence divides
+$N$, again forcing $N$ to have an odd divisor $>1$, so $N$ is not a power of $2$.
+
+Conversely, if $N$ is not a power of $2$, then $N$ has an odd divisor $d>1$.
+Write $N=dm$. If $m\ge (d+1)/2$, then
+\[
+N=\Bigl(m-\frac{d-1}{2}\Bigr)+\Bigl(m-\frac{d-1}{2}+1\Bigr)+\cdots+
+\Bigl(m+\frac{d-1}{2}\Bigr)
+\]
+is a sum of $d\ge3$ consecutive positive integers. If $m<(d+1)/2$, then $2m\ge2$ and
+\[
+N=\Bigl(\frac{d+1}{2}-m\Bigr)+\Bigl(\frac{d+1}{2}-m+1\Bigr)+\cdots+\Bigl(\frac{d+1}{2}+m-1\Bigr)
+\]
+is a sum of $2m$ consecutive positive integers.
+\end{proof}
+
+\section{Proof of Theorem~\ref{thm:main}}
+
+
+
+
+First, we show that $b_n$ is nondecreasing.
+
+\begin{lemma}\label{lem:bn-monotone}
+The sequence $(b_n)$ is nondecreasing. In particular, since $b_1=0$, we have
+$b_n\ge0$ for all $n$. If $(b_n)$ is bounded above, then there exist integers
+$n_0\ge1$ and $B\ge0$ such that
+\[
+a_n=n+B\qquad\forall\,n\ge n_0.
+\]
+\end{lemma}
+
+\begin{proof}
+Because $(a_n)$ is strictly increasing in integers, $a_{n+1}\ge a_n+1$ for all $n$.
+Hence
+\[
+b_{n+1}-b_n=(a_{n+1}-a_n)-1\ge0,
+\]
+so $(b_n)$ is nondecreasing. Since $b_1=a_1-1=0$, monotonicity gives $b_n\ge0$.
+
+If $(b_n)$ is bounded above, then a nondecreasing integer sequence must be
+eventually constant: there exist $n_0$ and an integer $B$ such that $b_n=B$
+for all $n\ge n_0$, i.e.\ $a_n=n+B$ for all $n\ge n_0$. Finally $B\ge0$
+because $B=b_n\ge0$ for all $n$. 
+\end{proof}
+
+Assume for contradiction that $(b_n)$ is bounded above, and fix $n_0,B$ as in
+Lemma~\ref{lem:bn-monotone}. Set
+\[
+T:=n_0+B.
+\]Define the finite  set
+\[
+\mathcal C:=\Bigl\{\sum_{k=p}^{n_0-1} a_k:\ 1\le p\le n_0\Bigr\},
+\]
+where the case $p=n_0$ gives the empty sum $0\in\mathcal C$.
+
+\begin{lemma}\label{lem:rep-types}
+Assume $a_n=n+B$ for all $n\ge n_0$.
+Let $t=a_n$ with $n\ge n_0$ and suppose $t>S_{n_0-1}$ (where $S_m=\sum_{i=1}^m a_i$).
+Then any representation
+\[
+t=\sum_{k=p}^{q} a_k
+\qquad(1\le p\le q\le n-1,\ \ q-p+1\ge2)
+\]
+falls into exactly one of the following two types:
+\begin{itemize}
+\item[\textup{(A)}] $p\ge n_0$, and then
+\[
+t=\sum_{m=u}^{v} m
+\quad\text{for some integers }u\ge T,\ v\ge u+1.
+\]
+\item[\textup{(B)}] $p<n_0\le q$, and then
+\[
+t=C+\sum_{m=T}^{v} m
+\quad\text{for some }C\in\mathcal C\text{ and some integer }v\ge T.
+\]
+\end{itemize}
+Moreover, the case $q<n_0$ is impossible whenever $t>S_{n_0-1}$.
+\end{lemma}
+
+\begin{proof}
+Let $t=\sum_{k=p}^{q} a_k$ with $q-p+1\ge2$ and $q\le n-1$.
+If $q<n_0$, then the block lies entirely in $\{1,\dots,n_0-1\}$, hence
+\[
+t=\sum_{k=p}^{q} a_k\le \sum_{k=1}^{n_0-1} a_k=S_{n_0-1},
+\]
+contradicting $t>S_{n_0-1}$. Thus $q<n_0$ is impossible, so $q\ge n_0$.
+
+If $p\ge n_0$, then using $a_k=k+B$ for $k\ge n_0$ we obtain
+\[
+t=\sum_{k=p}^{q} (k+B)=\sum_{k=p}^{q}k+(q-p+1)B.
+\]
+Set $u:=p+B$ and $v:=q+B$. Then $u\ge n_0+B=T$, and since $q-p+1\ge2$ we have
+$v-u+1=q-p+1\ge2$, i.e.\ $v\ge u+1$. Also
+\[
+\sum_{k=p}^{q}k+(q-p+1)B=\sum_{m=u}^{v} m,
+\]
+giving type (A).
+
+If instead $p<n_0$, then $q\ge n_0$ as shown above, and we split the block:
+\[
+t=\sum_{k=p}^{n_0-1} a_k \;+\;\sum_{k=n_0}^{q} a_k.
+\]
+The first part equals some $C\in\mathcal C$ by definition. For the second part,
+\[
+\sum_{k=n_0}^{q} a_k=\sum_{k=n_0}^{q}(k+B)=\sum_{m=T}^{q+B} m.
+\]
+Setting $v:=q+B$ (so $v\ge T$) yields type (B).
+These two cases are disjoint as conditions on the indices (either $p\ge n_0$
+or $p<n_0$), although the resulting sets of attainable values may overlap.\end{proof}
+
+
+\begin{lemma}\label{lem:powers-two-force-dioph}
+Assume $a_n=n+B$ for all $n\ge n_0$ and write $T=n_0+B$.
+Then for every integer $r$ with
+\[
+2^r\ge \max\{T,\ S_{n_0-1}+1, \ B+3 \},
+\]
+the number $2^r$ is a term of the sequence and admits a representation of type \textup{(B)}.
+Consequently, for each such $r$ there exist $C\in\mathcal C$ and an integer $v\ge T$ such that
+\[
+2^{r+1}=v^2+v+E_C,\qquad E_C:=2C-(T-1)T.
+\]
+Moreover, there exists a fixed integer $E$ for which the equation
+\[
+v^2+v+E=2^m
+\]
+has infinitely many integer solutions $(v,m)$.
+\end{lemma}
+
+\begin{proof}
+Fix $r$ with $2^r\ge T=n_0+B$. Since the tail is consecutive integers
+$a_n=n+B$ for $n\ge n_0$, taking $n:=2^r-B$ gives $n\ge n_0$ and
+\[
+a_n=n+B=2^r,
+\]
+so $2^r$ is indeed a term of the sequence.
+
+Because $n\ge3$ for all sufficiently large $r$, the defining rule of the sequence
+provides a representation
+\[
+2^r=a_n=\sum_{k=p}^{q}a_k
+\qquad(1\le p\le q\le n-1,\ \ q-p+1\ge2).
+\]
+Also $2^r>S_{n_0-1}$ by the hypothesis on $r$, so Lemma~\ref{lem:rep-types} applies.
+If the representation were of type (A), then Lemma~\ref{lem:rep-types}(A) would give
+\[
+2^r=\sum_{m=u}^{v}m
+\quad\text{with }v\ge u+1,
+\]
+a sum of at least two consecutive positive integers, contradicting
+Lemma~\ref{lem:consecutive-iff-not-2power} since $2^r$ is a power of $2$.
+Thus the representation must be of type (B), so
+\[
+2^r=C+\sum_{m=T}^{v}m
+\quad\text{for some }C\in\mathcal C,\ v\ge T.
+\]
+Using $\sum_{m=T}^{v}m=\frac{v(v+1)}2-\frac{(T-1)T}2$ and multiplying by $2$ yields
+\[
+2^{r+1}=v^2+v+\bigl(2C-(T-1)T\bigr)=v^2+v+E_C,
+\]
+as claimed.
+
+For the final statement, consider the set of pairs
+\[
+A:=\Bigl\{(r,C)\in\mathbb Z_{>1}\times\mathcal C:\ 
+\exists\,v\ge T\ \text{with}\ 2^{r+1}=v^2+v+E_C\Bigr\}.
+\]
+We have shown: for every sufficiently large $r$,
+there exists at least one $C\in\mathcal C$ with $(r,C)\in A$.
+Therefore $A$ is infinite. Since $\mathcal C$ is finite, the infinite
+pigeonhole principle implies that there exists a fixed $C_\ast\in\mathcal C$
+such that $(r,C_\ast)\in A$ for infinitely many $r$.
+For each such $r$, choose one corresponding $v$; then setting $m:=r+1$ and
+$E:=E_{C_\ast}$ produces infinitely many solutions $(v,m)\in\mathbb Z_{>0}\times\mathbb Z_{>2}$ to
+$v^2+v+E=2^m$.
+\end{proof}
+
+
+
+
+Now we conclude the main contradiction. By Lemma~\ref{lem:powers-two-force-dioph},
+boundedness of $(b_n)$ implies the existence of a fixed integer $E$ for which
+$v^2+v+E=2^m$ has infinitely many integer solutions $(v,m)$. This contradicts Proposition~\ref{prop:finite-dioph}. Therefore $(b_n)$ is not bounded above, i.e.\ $(b_n)$
+is unbounded. 
+
+Finally, if $\{a_n\}$ omitted only finitely many positive integers, then there would exist
+$N_1$ such that every integer $t\ge N_1$ equals some $a_n$. Since $(a_n)$ is strictly increasing,
+this would force $a_n=n+B$ for all sufficiently large $n$, i.e.\ boundedness of $b_n$,
+contradicting unboundedness. Hence $\{a_n\}$ omits infinitely many integers. This proves Theorem~\ref{thm:main}.\qed
+
+\begin{thebibliography}{99}
+
+\bibitem{EP}
+T. F. Bloom, Erd\H{o}s Problem \#423, \url{https://www.erdosproblems.com/423}, accessed 2026-01-15.
+
+
+\bibitem{Er77c}
+Erd\H{o}s, Paul, Problems and results on combinatorial number theory. III. Number theory day (Proc. Conf., Rockefeller Univ.,
+New York, 1976) (1977), 43--72.
+
+\bibitem{ErGr80}
+Erd\H{o}s, P. and Graham, R., Old and new problems and results in combinatorial number theory. Monographies de L'Enseignement Mathematique (1980).
+
+\bibitem{Gu04}
+Guy, Richard K., Unsolved problems in number theory. (2004)
+
+\bibitem{SchinzelTijdeman1976}
+A.~Schinzel and R.~Tijdeman,
+\newblock On the equation $y^m=P(x)$,
+\newblock \emph{Acta Arith.} \textbf{31} (1976), 199--204.
+
+
+\end{thebibliography}
+
+\end{document}
