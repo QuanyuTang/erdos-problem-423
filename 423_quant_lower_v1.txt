@@ -1,0 +1,1344 @@
+\documentclass[11pt,letterpaper,reqno]{amsart}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric, arrows.meta, calc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{enumitem} 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} 
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{doi}
+\usepackage{float} 
+\usepackage{comment} 
+\addtolength{\hoffset}{-1.5cm}\addtolength{\textwidth}{3cm}
+\addtolength{\voffset}{-1cm}\addtolength{\textheight}{2cm}
+
+\usepackage{bookmark}
+\usepackage{hyperref}
+\hypersetup{pdfstartview={FitH}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\abs}[1]{| #1 |}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\tr}{\operatorname{Tr}}
+\DeclareMathOperator{\rank}{rank}
+
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\numberwithin{equation}{section}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\taufunc}{\tau}
+\newcommand{\omegap}{\omega}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\R}{\mathbb{R}}        % real numbers
+\newcommand{\E}{\mathbb{E}}        % expectation
+\newcommand{\Var}{\mathrm{Var}}    % variance
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\PP}{\mathbb{P}}     % probability
+\newcommand{\eps}{\varepsilon}     % epsilon
+\newcommand{\ind}{\mathbf{1}}      % indicator function
+\newcommand{\seq}[1]{\left(#1\right)} % sequence
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
+
+
+
+\begin{document}
+
+
+\title[Hofstadter sequence]{The Hofstadter consecutive-sum sequence omits infinitely many positive integers}
+
+\author{Quanyu Tang}
+\address{School of Mathematics and Statistics, Xi'an Jiaotong University, Xi'an 710049, P. R. China}
+\email{tang\_quanyu@163.com}
+
+
+\subjclass[2020]{Primary 11B83; Secondary 11D61}
+
+% 11B83  	Special sequences and polynomials
+% 11D61  	Exponential Diophantine equations
+\keywords{self-generating sequence, consecutive-term sums}
+
+
+
+
+\begin{abstract}
+Let $(a_n)_{n\ge 1}$ be the greedy self-generating sequence defined by $a_1=1$, $a_2=2$, and, for $k\ge 3$, by taking $a_k$ to be the least integer greater than $a_{k-1}$ that can be written as a sum of at least two consecutive earlier terms. Hofstadter asked about the asymptotic behavior of this sequence. In this paper we prove that
+$$
+n+\Omega(\log\log n)\le a_n \ll n^{4175/2506+o(1)}.
+$$
+In particular, $(a_n)_{n\ge1}$ omits infinitely many positive integers, thereby settling a conjecture from the OEIS entry \seqnum{A005243}.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+
+
+A self-generating greedy process, often discussed under the name \emph{Hofstadter sequences} (see, for instance, \cite{Weisstein-HofstadterSequences} or \cite[E31]{Gu04}), starts from a short initial list and then repeatedly adjoins sums of consecutive earlier terms. In its classical form, the seed is $(1,2)$, and one generates a strictly increasing sequence $(a_n)_{n\ge 1}$ by setting $a_1=1$, $a_2=2$, and, for $k\ge 3$, taking $a_k$ to be the least integer greater than $a_{k-1}$ that can be written as a sum of at least two consecutive earlier terms:
+\begin{equation}\label{eq:hof}
+  a_k=\sum_{i=p}^{q} a_i
+  \qquad\text{for some }1\le p\le q\le k-1,\ \ q-p\ge1.
+\end{equation}
+This is \seqnum{A005243} in the OEIS~\cite{OEIS-A005243}. The asymptotic behavior of $(a_n)_{n\ge1}$ was asked about by Hofstadter and has been recorded in several places, including \cite[p.~71]{Er77c}, \cite[p.~83]{ErGr80}, \cite[E31]{Gu04}, and as Problem~\#423 on Bloom's \emph{Erd\H{o}s Problems} website~\cite{EP}.
+
+
+
+\begin{problem}[\cite{Er77c,ErGr80,Gu04}]\label{prob:423}
+What is the asymptotic behavior of the sequence \eqref{eq:hof}?
+\end{problem}
+
+Numerically, the sequence appears to contain ``most'' integers. For orientation, the sequence \eqref{eq:hof} begins
+\[
+1,2,3,5,6,8,10,11,14,16,17,18,19,21,22,24,25,29,30,32,\dots,
+\]
+and hence it already omits $4,7,9,12,13,15,20,\dots$. At the same time, the \emph{COMMENTS} section of \seqnum{A005243} records the following conjecture.
+
+\begin{conjecture}[\cite{OEIS-A005243}]\label{conj:missing}
+The sequence~\eqref{eq:hof} omits infinitely many positive integers.
+\end{conjecture}
+
+In this paper we prove Conjecture~\ref{conj:missing}. In fact, our argument applies to a much
+broader class of related greedy sequences obtained from an arbitrary finite initial seed. For related work on consecutive sums in integer sequences, see Hegyv\'ari~\cite{Hegyvari1986}, Beker~\cite{Beker2024}, and Tao~\cite{Tao2026}.
+
+
+
+\begin{definition}\label{def:general}
+Let $s\ge 2$ and let $\mathbf{u}=(u_1,\dots,u_s)$ be a seed of length $s$ consisting of
+positive integers (not necessarily distinct or ordered).
+Define a sequence of positive integers $(a_n^{\mathbf{u}})_{n\ge1}$ by
+\[
+a_n^{\mathbf{u}}:=u_n \qquad (1\le n\le s),
+\]
+and for $n\ge s+1$ let $a_n^{\mathbf{u}}$ be the least integer greater than $a_{n-1}^{\mathbf{u}}$
+that can be written as a sum of at least two consecutive earlier terms:
+\[
+a_n^{\mathbf{u}}=\sum_{k=p}^{q} a_k^{\mathbf{u}}
+\qquad\text{for some }1\le p\le q\le n-1,\ \ q-p\ge1.
+\]
+We also set
+\[
+b_n^{\mathbf{u}}:=a_n^{\mathbf{u}}-n\qquad(n\ge1).
+\]
+This definition is well defined: for each $n\ge s+1$, the sum \(a_{n-2}^{\mathbf{u}}+a_{n-1}^{\mathbf{u}}\) is a valid candidate for $a_n^{\mathbf{u}}$, and it is strictly greater than $a_{n-1}^{\mathbf{u}}$ because all terms are positive. Therefore the minimum in the definition of $a_n^{\mathbf{u}}$ always exists. In particular, we have $a_{n+1}^{\mathbf{u}}>a_n^{\mathbf{u}}$ for all $n\ge s$.
+\end{definition}
+
+
+
+When $\mathbf{u}=(1,2)$, the sequence $(a_n^{\mathbf{u}})_{n\ge1}$ coincides with the classical sequence~\eqref{eq:hof}.
+
+
+
+\begin{theorem}\label{thm:main}
+For every integer $s\ge 2$ and every seed $\mathbf{u}$ of length $s$ consisting of positive integers,
+the sequence $(b_n^{\mathbf{u}})_{n\ge1}$ is eventually nondecreasing; indeed, it is nondecreasing for all
+$n\ge s$. Moreover, $(b_n^{\mathbf{u}})_{n\ge1}$ is unbounded.
+\end{theorem}
+
+The quantity \(b_n^{\mathbf{u}}=a_n^{\mathbf{u}}-n\) measures the excess of the current term over its index. For all sufficiently large \(n\), it gives a lower bound for the number of omitted positive integers in \([1,a_n^{\mathbf{u}}]\). As a consequence, we obtain the following corollary.
+
+
+
+\begin{corollary}\label{cor:missing}
+For every integer $s\ge 2$ and every seed $\mathbf{u}$ of length $s$ consisting of positive integers,
+\[
+a_n^{\mathbf{u}} = n+\omega(1).
+\]
+In particular, the set \(\{a_n^{\mathbf{u}}:n\ge1\}\) omits infinitely many positive integers.
+\end{corollary}
+
+In particular, taking $\mathbf{u}=(1,2)$ in Corollary~\ref{cor:missing} proves
+Conjecture~\ref{conj:missing}.
+
+
+
+For the classical sequence~\eqref{eq:hof}, one can in fact prove a stronger quantitative form of Corollary~\ref{cor:missing}:
+\begin{theorem}\label{thm:quantitative-lower-classical}
+For the classical sequence~\eqref{eq:hof}, we have
+\[
+a_n\ge n+\frac{\log\log n}{\log 20}-O(1).
+\]
+\end{theorem}
+
+
+For the classical sequence~\eqref{eq:hof}, we also obtain a quantitative upper bound. In fact, the same argument extends to every fixed positive seed; see Remark~\ref{remark:aqubftcs_vv1}.
+
+\begin{theorem}\label{thm:upper-final}
+For every $\varepsilon>0$ there exists $C_\varepsilon>0$ such that, for all $n\ge 1$,
+\[
+a_n \le C_\varepsilon\, n^{4175/2506+\varepsilon}.
+\]
+\end{theorem}
+
+
+The proof of Theorem~\ref{thm:upper-final} combines the greedy structure of the sequence with a recent lower bound for difference sets of finite convex sets. Thus, besides proving that the sequence omits infinitely many positive integers, we also obtain a first polynomial upper bound toward Problem~\ref{prob:423}.
+
+
+
+
+\subsection*{Notation}
+We use Vinogradov's asymptotic notation. For functions \(f=f(n)\) and \(g=g(n)\), we write \(f=O(g)\), \(f\ll g\), or \(g\gg f\) to mean that there exists a constant \(C>0\) such that \(|f(n)|\le C g(n)\) for all sufficiently large \(n\). If the implicit constant is allowed to depend on one or more parameters $z_1,\dots,z_r$, we indicate this by writing $f\ll_{z_1,\dots,z_r} g$, $g\gg_{z_1,\dots,z_r} f$ or $f=O_{z_1,\dots,z_r}(g)$. We write $f\asymp g$ or $f=\Theta(g)$ to mean that $f\ll g$ and $g\ll f$, and write $f=o(g)$ to mean $f(n)/g(n)\to0$ as $n\to\infty$. We write $f=\omega(g)$ to mean that $g=o(f)$, equivalently, \(|f(n)|/g(n)\to\infty\) when $n\to\infty$, assuming $g(n)>0$ for all sufficiently large $n$. In particular, $\omega(1)$ denotes any quantity tending to
+infinity as $n\to\infty$.
+
+
+
+
+
+\subsection*{Paper organization}
+Section~\ref{sec:Preliminaries} collects the preliminary ingredients, including the characterization of integers that can be written as sums of at least two consecutive positive integers and a Diophantine finiteness consequence of a result of Schinzel and Tijdeman. In Section~\ref{sec:lower_bound} we prove Theorem~\ref{thm:main} and Corollary~\ref{cor:missing}. Section~\ref{sec:quant-lower_bound} establishes a quantitative lower bound for the classical sequence, proving Theorem~\ref{thm:quantitative-lower-classical}. Section~\ref{sec:upper-bound} is devoted to the proof of the polynomial upper bound in Theorem~\ref{thm:upper-final}. Finally, Section~\ref{sec:conclude} contains concluding remarks and numerical observations.
+
+
+
+
+
+
+
+\section{Preliminaries}\label{sec:Preliminaries}
+
+We start with a standard characterization of sums of consecutive integers.
+
+\begin{lemma}\label{lem:consecutive}
+A positive integer $N$ can be written as a sum of at least two consecutive positive integers
+if and only if $N$ is not a power of $2$.
+\end{lemma}
+
+\begin{proof}
+Suppose $N=x+(x+1)+\cdots+(x+\ell-1)$ with $\ell\ge2$ and $x\ge1$. Then
+\[
+2N=\ell(2x+\ell-1).
+\]
+If $\ell$ is odd, then $\ell\mid 2N$ implies $\ell\mid N$, so $N$ has an odd divisor $>1$.
+If $\ell$ is even, then $2x+\ell-1$ is odd and divides $2N$, hence divides $N$; again $N$ has
+an odd divisor $>1$.  In either case $N$ cannot be a power of $2$.
+
+Conversely, if $N$ is not a power of $2$, then $N$ has an odd divisor $d>1$, say $N=dm$.
+If $m\ge (d+1)/2$, then
+\[
+N=\Bigl(m-\frac{d-1}{2}\Bigr)+\Bigl(m-\frac{d-1}{2}+1\Bigr)+\cdots+\Bigl(m+\frac{d-1}{2}\Bigr)
+\]
+is a sum of $d$ consecutive positive integers.  If $m<(d+1)/2$, then
+\[
+N=\Bigl(\frac{d+1}{2}-m\Bigr)+\Bigl(\frac{d+1}{2}-m+1\Bigr)+\cdots+\Bigl(\frac{d+1}{2}+m-1\Bigr)
+\]
+is a sum of $2m\ge2$ consecutive positive integers.
+\end{proof}
+
+% Next we record the Diophantine input.  We use the following consequence of the
+% theorem of Schinzel and Tijdeman~\cite[Corollary~1]{SchinzelTijdeman1976}.
+
+Next we record the Diophantine ingredient. We shall use the following consequence of a result of Schinzel and Tijdeman~\cite[Corollary~1]{SchinzelTijdeman1976}.
+
+\begin{lemma}[\cite{SchinzelTijdeman1976}]\label{lem:st}
+Let $P(x)\in\mathbb{Q}[x]$ be a polynomial with at least two simple zeros. Then the equation
+\[
+y^k=P(x),\qquad x,y\in\ZZ,\ \ |y|>1,
+\]
+has only finitely many integer solutions $(x,y,k)$ with $k>2$.
+\end{lemma}
+
+
+
+\begin{corollary}\label{cor:quad}
+Fix $E\in\ZZ$.  The equation
+\[
+v^2+v+E=2^k
+\]
+has only finitely many integer solutions $(v,k)\in\ZZ^2$ with $k>2$.
+\end{corollary}
+
+\begin{proof}
+Apply Lemma~\ref{lem:st} with $y=2$ and $P(v)=v^2+v+E$. Since $E\in\ZZ$, the discriminant of $P$ is $1-4E\neq0$; hence $P$ has two distinct (and therefore simple) zeros, so the lemma applies.
+\end{proof}
+
+% \section{Proof of Theorem~\ref{thm:main}}
+
+% Fix $m\ge1$ and abbreviate $a_n:=a_n^{\mathbf{u}}$, $b_n:=b_n^{\mathbf{u}}$, and $s:=2^m$.
+
+% \section{A qualitative lower bound for $a_n$}
+\section{A qualitative lower bound and infinitely many omissions}\label{sec:lower_bound}
+
+% Fix a seed $\mathbf{u}$ of length $s\ge 2$, and abbreviate
+% \[
+% a_n:=a_n^{\mathbf{u}},\qquad b_n:=b_n^{\mathbf{u}}\qquad(n\ge1).
+% \]
+
+Throughout this section, we fix a seed
+$\mathbf{u}$ of length $s\ge 2$, and write
+\[
+a_n:=a_n^{\mathbf{u}},\qquad b_n:=b_n^{\mathbf{u}}\qquad(n\ge1).
+\]
+Our goal is to show that $(b_n)$ is unbounded. The first step is a simple monotonicity observation,
+which will later force eventual linearity if $(b_n)$ were bounded.
+
+
+\subsection{Monotonicity and eventual linearity}
+
+\begin{lemma}\label{lem:monotone}
+The sequence $(b_n)_{n\ge s}$ is nondecreasing.
+\end{lemma}
+
+\begin{proof}
+For every $n\ge s$, the greedy construction gives $a_{n+1}>a_n$, hence $a_{n+1}\ge a_n+1$.
+Therefore, for $n\ge s$,
+\[
+b_{n+1}-b_n=(a_{n+1}-(n+1))-(a_n-n)=a_{n+1}-a_n-1\ge0.
+\qedhere\]
+\end{proof}
+
+
+
+
+\begin{lemma}\label{lem:linear}
+If $(b_n)_{n\ge s}$ is bounded above, then there exist integers $n_0\ge s$ and $B$ such that
+\[
+a_n=n+B\qquad\text{for all }n\ge n_0.
+\]
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:monotone}, the sequence $(b_n)_{n\ge s}$ is a nondecreasing sequence of integers.
+If $(b_n)_{n\ge s}$ is bounded above, then $(b_n)_{n\ge s}$ must be eventually constant: there exist
+$n_0\ge s$ and an integer $B$ such that $b_n=B$ for all $n\ge n_0$. Hence $a_n=n+b_n=n+B$
+for all $n\ge n_0$.
+\end{proof}
+
+
+
+
+% \begin{lemma}\label{lem:linear}
+% If $(b_n)$ is bounded above, then there exist integers $n_0\ge1$ and $B\ge0$ such that
+% \[
+% a_n=n+B\qquad\text{for all }n\ge n_0.
+% \]
+% \end{lemma}
+
+% \begin{proof}
+% By Lemma~\ref{lem:monotone}, the sequence $(b_n)$ is a nondecreasing sequence of integers.
+% If it is bounded above, it must be eventually constant: there exist $n_0$ and an integer $B$
+% with $b_n=B$ for all $n\ge n_0$.  Then $a_n=n+b_n=n+B$ for all $n\ge n_0$.
+% Finally $B\ge0$ because $b_1=a_1-1=0$ and $(b_n)$ is nondecreasing.
+% \end{proof}
+
+From now on we assume, for contradiction, that $(b_n)_{n\ge s}$ is bounded above and hence that
+\begin{equation}\label{eq:tail}
+a_n=n+B\qquad(n\ge n_0)
+\end{equation}
+for some integers $n_0\ge s$ and $B$.
+
+% \subsection{Decomposing consecutive blocks past the linear tail}
+\subsection{Consecutive-block decompositions beyond the linear tail}
+
+Set $T:=n_0+B$ and
+\[
+S_{n_0-1}:=\sum_{i=1}^{n_0-1} a_i,
+\qquad
+\mathcal C:=\Bigl\{\sum_{k=p}^{n_0-1} a_k:\ 1\le p\le n_0\Bigr\}.
+\]
+(Here $p=n_0$ contributes the empty sum $0\in\mathcal C$.)  The next lemma isolates the only
+two ways a large term can be written as a sum of consecutive earlier terms once the tail is linear.
+
+
+
+
+
+
+\begin{lemma}\label{lem:types}
+Assume \eqref{eq:tail}. Let $t>S_{n_0-1}$, and suppose that
+\[
+t=\sum_{k=p}^{q} a_k
+\qquad\text{for some }1\le p<q.
+\]
+Then $q\ge n_0$, and exactly one of the following holds:
+\begin{itemize}
+\item[\textup{(i)}] $p\ge n_0$, in which case \(t=\sum_{j=p+B}^{q+B} j\);
+\item[\textup{(ii)}] $p<n_0\le q$, in which case \(t=C+\sum_{j=T}^{q+B} j\) for some $C\in\mathcal C$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+If $q\le n_0-1$, then
+\[
+t=\sum_{k=p}^{q} a_k\le \sum_{k=1}^{n_0-1} a_k=S_{n_0-1},
+\]
+contrary to the assumption $t>S_{n_0-1}$. Hence $q\ge n_0$.
+
+If $p\ge n_0$, then by \eqref{eq:tail},
+\[
+t=\sum_{k=p}^{q}(k+B)=\sum_{j=p+B}^{q+B} j,
+\]
+which is \textup{(i)}.
+
+If $p<n_0\le q$, then splitting the sum at $n_0$ gives
+\[
+t=\sum_{k=p}^{n_0-1}a_k+\sum_{k=n_0}^{q}a_k
+=C+\sum_{k=n_0}^{q}(k+B)
+=C+\sum_{j=T}^{q+B} j
+\]
+for some $C\in\mathcal C$, which is \textup{(ii)}.
+
+The two alternatives are mutually exclusive, since they impose opposite inequalities on $p$.
+\end{proof}
+
+
+
+
+
+
+
+
+\subsection{Powers of two force a quadratic exponential equation}
+
+The linear tail \eqref{eq:tail} implies that sufficiently large powers of two appear among the $a_n$. We now analyze the corresponding representations of these powers of two as sums of consecutive earlier terms.
+
+\begin{lemma}\label{lem:powers}
+Assume \eqref{eq:tail}.  For every integer $r$ with
+\begin{equation}\label{eq:2rtsbs1}
+2^r\ge \max\{T,\ S_{n_0-1}+1,\ B+s+1\},
+\end{equation}
+there exist $C\in\mathcal C$ and an integer $v\ge T$ such that
+\begin{equation}\label{eq:quad}
+2^{r+1}=v^2+v+E_C,\qquad E_C:=2C-(T-1)T.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Fix $r$ satisfying the inequality~\eqref{eq:2rtsbs1} and set $n=2^r-B$.  Then $n\ge n_0$ and
+\eqref{eq:tail} gives $a_n=n+B=2^r$.  Moreover, $n\ge s+1$, so by construction of the sequence
+there exist indices $1\le p\le q\le n-1$ with $q-p\ge1$ and
+\[
+2^r=a_n=\sum_{k=p}^{q} a_k.
+\]
+Since $2^r>S_{n_0-1}$, Lemma~\ref{lem:types} applies.  The alternative \textup{(i)} is impossible:
+if $2^r=\sum_{j=p+B}^{q+B}j$ with $q\ge p+1$, then $p\ge n_0$ implies
+\[
+p+B\ge n_0+B=T=a_{n_0}>0.
+\]
+Hence $2^r$ would be a sum of at least two consecutive positive integers, contradicting
+Lemma~\ref{lem:consecutive}. Therefore we are in case \textup{(ii)}. Thus for some $C\in\mathcal C$ and some $v:=q+B\ge T$ we have
+\[
+2^r = C+\sum_{j=T}^{v}j = C+\frac{v(v+1)-(T-1)T}{2}.
+\]
+Multiplying by $2$ yields \eqref{eq:quad}.
+\end{proof}
+
+\subsection{Completion of the proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Lemma~\ref{lem:monotone} shows that $(b_n)$ is nondecreasing for all $n\ge s$. It remains to prove that it is unbounded.
+
+Assume, for contradiction, that $(b_n)$ is bounded above.  Then \eqref{eq:tail} holds by Lemma~\ref{lem:linear}. Lemma~\ref{lem:powers} shows that for every sufficiently large $r$ we can find $C\in\mathcal C$ and $v\ge T$ such that \eqref{eq:quad} holds.  The set
+\[
+\mathcal E:=\{E_C:\ C\in\mathcal C\}
+\]
+is finite. Hence by the pigeonhole principle there exists some $E\in\mathcal E$ for which the equation
+\[
+v^2+v+E=2^k
+\]
+has infinitely many integer solutions $(v,k)\in\ZZ^2$ with $k>2$. This contradicts Corollary~\ref{cor:quad}. Therefore $(b_n)$ is unbounded, as claimed.
+\end{proof}
+
+
+
+
+
+
+
+\begin{proof}[Proof of Corollary~\ref{cor:missing}]
+By Theorem~\ref{thm:main}, the sequence \((b_n)\) is nondecreasing for all \(n\ge s\) and unbounded, hence \(b_n\to\infty\). Therefore
+\[
+a_n=n+b_n=n+\omega(1).
+\]
+Let \(M:=\max_{1\le i\le s} a_i\). For all sufficiently large \(n\), we have \(n\ge s\) and \(a_n\ge M\). Hence every value attained by the sequence in \([1,a_n]\) occurs among the first \(n\) terms: indeed, the initial seed values are all \(\le M\le a_n\), while \(a_m>a_n\) for every \(m>n\) because the sequence is strictly increasing from index \(s\) onward. The set of distinct values among \(a_1,\dots,a_n\) therefore has cardinality at most \(n\), so the number of positive integers in \([1,a_n]\) omitted by the sequence is at least
+\[
+a_n-n=b_n.
+\]
+Since \(b_n\to\infty\), the number of omitted integers up to \(a_n\) is unbounded. In particular, the set \(\{a_n:n\ge1\}\) omits infinitely many positive integers.
+\end{proof}
+
+
+
+
+
+\section{A quantitative lower bound for the classical sequence}\label{sec:quant-lower_bound}
+
+We now specialize to the classical sequence~\eqref{eq:hof}, and write
+\[
+b_n:=a_n-n \qquad (n\ge 1).
+\]
+The following result comes from Beukers~\cite[Corollary~1]{Beukers1981}.
+\begin{lemma}[\cite{Beukers1981}]\label{lem:beukers-explicit}
+Let $D\in\ZZ\setminus\{0\}$. Every integer solution $(x,m)\in\ZZ^2$ of
+\[
+x^2+D=2^m
+\]
+satisfies
+\[
+m<435+\frac{10\log|D|}{\log 2}.
+\]
+\end{lemma}
+
+\begin{lemma}\label{lem:local-power-plateau}
+Let $\widehat{B}\ge 1$, and suppose that
+\[
+b_n=\widehat{B}\qquad (n_1\le n\le n_2)
+\]
+for some integers $2\le n_1\le n_2$. Set
+\[
+\widehat{T}:=n_1+\widehat{B},\qquad \widehat{S}:=\sum_{i=1}^{n_1-1} a_i.
+\]
+If $r\in\ZZ$ satisfies
+\begin{equation}\label{eq:qqqwwweee1}
+\max\{\widehat{T},\ \widehat{S}+1,\ \widehat{B}+3\}\le 2^r\le n_2+\widehat{B},
+\end{equation}
+then there exist integers $x$ and $D\neq 0$ such that
+\[
+2^{r+3}=x^2+D
+\qquad\text{and}\qquad
+|D|\le 13\widehat{T}^2.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $(b_n)_{n\ge 1}$ is nondecreasing by Lemma~\ref{lem:monotone} and $b_{n_1}=\widehat{B}$, we have
+\[
+b_i\le \widehat{B} \qquad (1\le i<n_1).
+\]
+Hence
+\[
+\widehat{S}=\sum_{i=1}^{n_1-1} a_i
+ =\sum_{i=1}^{n_1-1}(i+b_i)
+ \le \sum_{i=1}^{n_1-1}(i+\widehat{B})
+ \le \widehat{T}^2.
+\]
+
+Now fix $r$ satisfying \eqref{eq:qqqwwweee1}, and set $\widehat{n}:=2^r-\widehat{B}$. Then
+\[
+n_1\le \widehat{n}\le n_2,
+\]
+so $a_{\widehat{n}}=\widehat{n}+\widehat{B}=2^r$. Also $\widehat{n}\ge 3$, and therefore the greedy definition of the classical sequence~\eqref{eq:hof} yields indices $1\le p<q\le \widehat{n}-1$ such that
+\[
+2^r=a_{\widehat{n}}=\sum_{k=p}^{q} a_k.
+\]
+Since $2^r>\widehat{S}$, we must have $q\ge n_1$. If $p\ge n_1$, then
+\[
+2^r=\sum_{k=p}^{q}(k+\widehat{B})=\sum_{j=p+\widehat{B}}^{q+\widehat{B}} j
+\]
+is a sum of at least two consecutive positive integers, contradicting Lemma~\ref{lem:consecutive}. Hence $p<n_1\le q$.
+
+Set
+\[
+\widehat{C}:=\sum_{k=p}^{n_1-1} a_k,\qquad \widehat{v}:=q+\widehat{B}.
+\]
+Then $0\le \widehat{C}\le \widehat{S}$ and
+\[
+2^r
+= \widehat{C}+\sum_{j=\widehat{T}}^{\widehat{v}} j
+= \widehat{C}+\frac{\widehat{v}(\widehat{v}+1)-\widehat{T}(\widehat{T}-1)}{2}.
+\]
+Thus
+\[
+2^{r+1}=\widehat{v}^2+\widehat{v}+2\widehat{C}-\widehat{T}(\widehat{T}-1),
+\]
+and therefore
+\[
+2^{r+3}=(2\widehat{v}+1)^2+D,
+\qquad
+D:=8\widehat{C}-4\widehat{T}(\widehat{T}-1)-1.
+\]
+Since $D\equiv -1\pmod 4$, we have $D\neq0$. Finally, using $0\le \widehat{C}\le \widehat{S}\le \widehat{T}^2$, we obtain
+\[
+|D|
+\le 8\widehat{C}+4\widehat{T}(\widehat{T}-1)+1
+\le 8\widehat{T}^2+4\widehat{T}^2+1
+\le 13\widehat{T}^2.
+\]
+This proves the lemma.
+\end{proof}
+
+
+
+
+We are now ready to prove the quantitative lower bound for the sequence~\eqref{eq:hof}.
+\begin{proof}[Proof of Theorem~\ref{thm:quantitative-lower-classical}]
+By Theorem~\ref{thm:main}, the sequence $(b_n)$ is nondecreasing and unbounded. Hence, for each integer $\widehat{B}\ge 0$,
+\[
+N(\widehat{B}):=\max\{n\ge 1:\ b_n\le \widehat{B}\}
+\]
+is well defined and finite. Set
+\[
+M(\widehat{B}):=N(\widehat{B})+\widehat{B}+2 \qquad (\widehat{B}\ge 0).
+\]
+We claim that there exists an absolute constant $K\ge 2$ such that
+\begin{equation}\label{eq:MB-recursion}
+M(\widehat{B})\le K\,M(\widehat{B}-1)^{20}\qquad(\widehat{B}\ge 1).
+\end{equation}
+
+Fix $\widehat{B}\ge 1$. If $N(\widehat{B})=N(\widehat{B}-1)$, then
+\[
+M(\widehat{B})
+=
+N(\widehat{B})+\widehat{B}+2
+=
+N(\widehat{B}-1)+\widehat{B}+2
+=
+M(\widehat{B}-1)+1.
+\]
+Since $M(\widehat{B}-1)\ge 2$, it follows that
+\[
+M(\widehat{B})\le M(\widehat{B}-1)^{20}.
+\]
+
+Suppose now that $N(\widehat{B})>N(\widehat{B}-1)$. Since $(b_n)$ is integer-valued
+and nondecreasing, we then have
+\[
+b_n=\widehat{B}
+\qquad
+\bigl(N(\widehat{B}-1)+1\le n\le N(\widehat{B})\bigr).
+\]
+Write
+\[
+n_1:=N(\widehat{B}-1)+1,\qquad
+n_2:=N(\widehat{B}),\qquad
+\widehat{T}:=n_1+\widehat{B}.
+\]
+Then
+\[
+\widehat{T}
+=
+N(\widehat{B}-1)+1+\widehat{B}
+=
+N(\widehat{B}-1)+(\widehat{B}-1)+2
+=
+M(\widehat{B}-1).
+\]
+
+Let
+\[
+K_0:=2^{432}13^{10}.
+\]
+We shall show that
+\[
+n_2+\widehat{B}\le 2K_0\widehat{T}^{20}.
+\]
+Assume to the contrary that
+\[
+n_2+\widehat{B}>2K_0\widehat{T}^{20}.
+\]
+Then there exists an integer $r$ such that
+\[
+K_0\widehat{T}^{20}<2^r\le 2K_0\widehat{T}^{20}<n_2+\widehat{B}.
+\]
+
+We now verify the hypotheses of Lemma~\ref{lem:local-power-plateau}.
+Since $\widehat{T}\ge 2$, we have
+\[
+2^r>K_0\widehat{T}^{20}\ge \widehat{T}^{20}>\widehat{T}^2.
+\]
+Moreover, for every $1\le i\le n_1-1$ we have $b_i\le \widehat{B}-1$, because
+$n_1=N(\widehat{B}-1)+1$. Hence
+\[
+a_i=i+b_i\le i+\widehat{B}-1
+\qquad (1\le i\le n_1-1),
+\]
+and therefore
+\[
+\sum_{i=1}^{n_1-1} a_i
+\le
+\sum_{i=1}^{n_1-1}(i+\widehat{B}-1)
+=
+\frac{(n_1-1)(n_1+2\widehat{B}-2)}{2}.
+\]
+On the other hand,
+\[
+\widehat{T}^2=(n_1+\widehat{B})^2,
+\]
+and a direct calculation shows that
+\[
+2\widehat{T}^2-(n_1-1)(n_1+2\widehat{B}-2)
+=
+n_1^2+2n_1\widehat{B}+2\widehat{B}^2+3n_1+2\widehat{B}-2>0.
+\]
+Thus
+\[
+\sum_{i=1}^{n_1-1} a_i\le \widehat{T}^2<2^r.
+\]
+Also, from $2^r>\widehat{T}^2$ and $\widehat{T}\ge 2$, we obtain
+\[
+2^r\ge \widehat{T}.
+\]
+Finally, since $n_1\ge 2$, we have
+\[
+\widehat{T}=n_1+\widehat{B}\ge \widehat{B}+2,
+\]
+and therefore
+\[
+2^r>\widehat{T}^2\ge (\widehat{B}+2)^2>\widehat{B}+3,
+\]
+so in particular
+\[
+2^r\ge \widehat{B}+3.
+\]
+
+Hence Lemma~\ref{lem:local-power-plateau} applies, and yields integers $x$ and
+$D\neq 0$ such that
+\[
+2^{r+3}=x^2+D
+\qquad\text{and}\qquad
+|D|\le 13\widehat{T}^2.
+\]
+Applying Lemma~\ref{lem:beukers-explicit}, we obtain
+\[
+r+3<435+\frac{10\log|D|}{\log 2}
+\le
+435+\frac{10\log(13\widehat{T}^2)}{\log 2}.
+\]
+Exponentiating, we get
+\[
+2^r<2^{432}13^{10}\widehat{T}^{20}=K_0\widehat{T}^{20},
+\]
+contrary to the choice of $r$. This contradiction proves that
+\[
+n_2+\widehat{B}\le 2K_0\widehat{T}^{20}.
+\]
+
+Since $n_2=N(\widehat{B})$ and $\widehat{T}=M(\widehat{B}-1)$, it follows that
+\[
+N(\widehat{B})+\widehat{B}\le 2K_0\,M(\widehat{B}-1)^{20},
+\]
+and hence
+\[
+M(\widehat{B})
+=
+N(\widehat{B})+\widehat{B}+2
+\le
+(2K_0+2)\,M(\widehat{B}-1)^{20}.
+\]
+Thus \eqref{eq:MB-recursion} holds with
+\[
+K:=2K_0+2.
+\]
+
+Taking logarithms in \eqref{eq:MB-recursion} and iterating, we obtain
+\[
+\log M(\widehat{B})
+\le
+20^{\widehat{B}}\log M(0)
++
+\bigl(1+20+\cdots+20^{\widehat{B}-1}\bigr)\log K
+\]
+for all $\widehat{B}\ge 0$, whence
+\[
+\log M(\widehat{B})
+\le
+20^{\widehat{B}}\log M(0)
++
+\frac{20^{\widehat{B}}-1}{19}\log K
+\le
+\widehat{A}\,20^{\widehat{B}},
+\]
+where
+\[
+\widehat{A}:=\log M(0)+\frac{\log K}{19}.
+\]
+
+Now fix $n\ge 2$ and put $\widehat{B}=b_n$. Then by definition of $N(\widehat{B})$, we have
+$n\le N(\widehat{B})<M(\widehat{B})$, and therefore
+\[
+\log n\le \log M(\widehat{B})\le \widehat{A}\,20^{\widehat{B}}.
+\]
+Taking logarithms once more, we get
+\[
+\widehat{B}=b_n\ge \frac{\log\log n-\log \widehat{A}}{\log 20}.
+\]
+Finally, since $a_n=n+b_n$, it follows that
+\[
+a_n\ge n+\frac{\log\log n}{\log 20}-\frac{\log \widehat{A}}{\log 20}.
+\]
+This proves the theorem.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{A quantitative upper bound for the classical sequence}\label{sec:upper-bound}
+In this section we restrict attention to the classical sequence~\eqref{eq:hof} and prove the bound
+\[
+a_n \ll_\varepsilon n^{4175/2506+\varepsilon}.
+\]
+\begin{remark}\label{remark:aqubftcs_vv1}
+For every fixed seed $\mathbf{u}$ of length $s\ge 2$ consisting of positive integers, the same exponent can also be obtained for $a_n^{\mathbf{u}}$, namely \(a_n^{\mathbf{u}} \ll_{\mathbf{u},\varepsilon} n^{4175/2506+\varepsilon}\). Indeed, by Definition~\ref{def:general}, the sequence $(a_n^{\mathbf{u}})_{n\ge s}$ is strictly increasing, so one may apply the argument of the present section to the tail
+\[
+a_s^{\mathbf{u}},a_{s+1}^{\mathbf{u}},a_{s+2}^{\mathbf{u}},\dots
+\]
+after making the obvious notational changes in the definitions of the relevant prefix sums and representable integers. Since this introduces additional bookkeeping but no essentially new idea, we present the details only for the classical seed $(1,2)$.
+\end{remark}
+\subsection{Greedy enumeration of the representable integers}
+
+We begin by isolating the set of integers that can be represented as sums of at least two
+consecutive terms. The key point is that the greedy construction does not merely produce
+some such integers: it lists all of them in increasing order.
+
+Define the partial sums
+\[
+s_0:=0,\qquad s_m:=\sum_{i=1}^m a_i\quad(m\ge 1),
+\]
+and the prefix-sum set
+\[
+\widetilde{S}_m:=\{s_0,s_1,\dots,s_m\}.
+\]
+For $m\ge 2$ let
+\[
+\mathcal R_m:=\Bigl\{\sum_{i=p}^q a_i:\ 1\le p<q\le m\Bigr\}\subset \mathbb N,
+\qquad
+\mathcal R:=\bigcup_{m\ge 2}\mathcal R_m.
+\]
+Thus $\mathcal R$ is the set of all integers representable as a sum of at least two
+consecutive terms of the sequence.
+
+\begin{lemma}\label{lem:greedy-enumerates-R}
+We have $\{a_k: k\ge 3\}=\mathcal R$, and $(a_3,a_4,\dots)$ is the increasing enumeration
+of $\mathcal R$. In particular, for every $X\ge 1$,
+\begin{equation}\label{eq:count-implies-an}
+\#(\mathcal R\cap[1,X])\ \ge\ n
+\quad\Longrightarrow\quad
+a_{n+2}\le X.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+First note that $a_k\in\mathcal R_{k-1}\subset \mathcal R$ for every $k\ge 3$ by definition, so
+$\{a_k:k\ge 3\}\subseteq \mathcal R$.
+
+Fix $k\ge 3$. We claim that there is no element of $\mathcal R$ strictly between $a_{k-1}$ and $a_k$.
+Indeed, suppose for contradiction that there exists $x\in\mathcal R$ with
+\[
+a_{k-1}<x<a_k.
+\]
+Choose a representation $x=\sum_{i=p}^q a_i$ with $p<q$. Since all terms are positive, every summand
+satisfies $a_i\le x<a_k$. As $(a_i)$ is strictly increasing, this forces $q\le k-1$, so in fact
+$x\in\mathcal R_{k-1}$. But then $x$ is a representable integer using the first $k-1$ terms and
+$x>a_{k-1}$, contradicting the greedy choice of $a_k$ as the least such representable integer.
+This proves the claim.
+
+It remains to show the reverse inclusion $\mathcal R\subseteq \{a_k:k\ge3\}$.
+Let $x\in\mathcal R$. Since $(a_k)$ is strictly increasing with $a_k\ge a_{k-1}+1$,
+we have $a_k\to\infty$, so there exists a minimal $k\ge3$ such that $a_k\ge x$.
+Then $a_{k-1}<x\le a_k$. If $x<a_k$, this would place $x$ in the interval
+$(a_{k-1},a_k)$, contradicting the claim proved above that $\mathcal R$ contains
+no element strictly between $a_{k-1}$ and $a_k$. Hence $x=a_k$, proving
+$\mathcal R\subseteq\{a_k:k\ge3\}$. Consequently, for each $k\ge 3$, the number $a_k$ is the smallest element of $\mathcal R$ that is
+greater than $a_{k-1}$. Therefore $(a_3,a_4,\dots)$ lists the elements of $\mathcal R$ in strictly
+increasing order, i.e.\ it is the increasing enumeration of $\mathcal R$.
+
+Finally, \eqref{eq:count-implies-an} follows immediately: if $\#(\mathcal R\cap[1,X])\ge n$ then the
+$n$-th element of $\mathcal R$ is $\le X$, hence $a_{n+2}\le X$.
+\end{proof}
+
+The preceding lemma reduces the problem of bounding $a_n$ to that of producing many
+representable integers below a controlled threshold. The next observation makes this reduction
+quantitative at a finite stage.
+
+\begin{lemma}\label{lem:Rm-to-an}
+For every $m\ge 2$, we have $\mathcal R_m\subseteq \mathcal R\cap[1,s_m]$. In particular, if
+$|\mathcal R_m|\ge n$ then
+\begin{equation}\label{eq:an-le-sm}
+a_{n+2}\le s_m.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Every element of $\mathcal R_m$ is a sum of at least two consecutive terms among $a_1,\dots,a_m$,
+hence belongs to $\mathcal R$. Such a sum is clearly at most $a_1+\cdots+a_m=s_m$, so
+$\mathcal R_m\subseteq \mathcal R\cap[1,s_m]$.
+
+If $|\mathcal R_m|\ge n$, then $\#(\mathcal R\cap[1,s_m])\ge n$, and \eqref{eq:an-le-sm} follows from
+Lemma~\ref{lem:greedy-enumerates-R} and \eqref{eq:count-implies-an}.
+\end{proof}
+
+We now turn to the task of estimating $|\mathcal R_m|$. The key idea is to rewrite sums of
+consecutive terms as differences of prefix sums, thereby bringing in additive-combinatorial
+results on convex sets.
+
+
+\subsection{From consecutive sums to a convex difference set}
+
+We recall the standard additive-combinatorial notion of convexity. A finite set \(Y=\{y_1<y_2<\cdots<y_n\}\subset \mathbb R\) is called \emph{convex} if its consecutive differences form a strictly increasing sequence, that is,
+\[
+y_{i+1}-y_i<y_{i+2}-y_{i+1}
+\qquad(1\le i\le n-2).
+\]
+We now observe that the prefix-sum set $\widetilde{S}_m$ is convex in this sense.
+
+\begin{lemma}\label{lem:prefix-sums-convex}
+For each $m\ge 2$, the set $\widetilde{S}_m=\{s_0<s_1<\cdots<s_m\}$ is convex, i.e.
+\[
+s_i-s_{i-1}<s_{i+1}-s_i\qquad(1\le i\le m-1).
+\]
+\end{lemma}
+
+\begin{proof}
+We have $s_i-s_{i-1}=a_i$ for all $i\ge 1$, and $(a_i)$ is strictly increasing by construction.
+\end{proof}
+
+Since every sum of consecutive terms is a difference of two prefix sums, the difference set \(\widetilde{S}_m-\widetilde{S}_m\) provides a natural ambient set in which $\mathcal R_m$ sits. The next lemma makes this relation explicit.
+
+\begin{lemma}\label{lem:Rm-from-diffset}
+Let $D_m:=\widetilde{S}_m-\widetilde{S}_m=\{x-y:\ x,y\in \widetilde{S}_m\}$. Then
+\[
+|\mathcal R_m| \ge \frac{|D_m|-1}{2}-m.
+\]
+\end{lemma}
+
+\begin{proof}
+Let
+\[
+D_m^+:=\{d\in D_m:\ d>0\}.
+\]
+Since $D_m$ is symmetric and contains $0$, we have
+\[
+|D_m^+|=\frac{|D_m|-1}{2}.
+\]
+Every $d\in D_m^+$ can be written as
+\[
+d=s_j-s_i=\sum_{t=i+1}^j a_t
+\qquad(0\le i<j\le m).
+\]
+If $j-i=1$, then $d=a_j\in\{a_1,\dots,a_m\}$.
+If $j-i\ge2$, then $d\in\mathcal R_m$.
+Therefore
+\[
+D_m^+\subseteq \{a_1,\dots,a_m\}\cup \mathcal R_m.
+\]
+Hence
+\[
+\frac{|D_m|-1}{2}=|D_m^+|\le m+|\mathcal R_m|,
+\]
+which rearranges to
+\[
+|\mathcal R_m|\ge \frac{|D_m|-1}{2}-m.
+\qedhere\]
+\end{proof}
+
+
+
+\subsection{Bloom's convex difference-set bound and the basic recursion}
+
+We now combine the convexity of the prefix-sum set with a recent difference-set estimate of Bloom.
+This will yield a lower bound for $|\mathcal R_m|$, and hence, via the greedy enumeration established
+above, a recursive upper bound for $a_n$.
+
+The key additive-combinatorial input is the following difference-set bound for finite convex sets, due to Bloom~\cite[Theorem~2]{Blo25}.
+
+\begin{theorem}[\cite{Blo25}]\label{thm:Bloom-convex-diff}
+For every $\eta>0$ there exists $c_\eta>0$ such that for every finite convex set $A\subset\mathbb R$,
+\[
+|A-A| \ge c_\eta\,|A|^{6681/4175-\eta}.
+\]
+\end{theorem}
+
+Applying this estimate to the convex set $\widetilde{S}_m$, and then using the relation between
+$\widetilde{S}_m-\widetilde{S}_m$ and $\mathcal R_m$ established in Lemma~\ref{lem:Rm-from-diffset},
+we obtain the following lower bound for the number of representable integers up to stage $m$.
+
+\begin{proposition}\label{prop:Rm-lower-bloom}
+Fix $0<\eta<2506/4175$ and set $\delta=6681/4175-\eta$. Then there exist constants $m_0\in\mathbb N$ and $c>0$
+(depending only on $\eta$) such that for all $m\ge m_0$,
+\[
+|\mathcal R_m| \ge c\, m^{\delta}.
+\]
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:prefix-sums-convex}, the set $\widetilde{S}_m$ is convex and $|\widetilde{S}_m|=m+1$. Applying
+Theorem~\ref{thm:Bloom-convex-diff} to $A=\widetilde{S}_m$ gives
+\[
+|D_m|=|\widetilde{S}_m-\widetilde{S}_m| \ge c_\eta\,(m+1)^{\delta}.
+\]
+Insert this into Lemma~\ref{lem:Rm-from-diffset}:
+\[
+|\mathcal R_m| \ge \frac{c_\eta(m+1)^{\delta}-1}{2}-m.
+\]
+For all sufficiently large $m$ the right-hand side is $\ge (c_\eta/4)\,m^{\delta}$, which proves this
+proposition with suitable choices of $m_0$ and $c$.
+\end{proof}
+
+The proposition shows that $\mathcal R_m$ grows polynomially with exponent $\delta>1$. We now feed this
+counting information back into Lemma~\ref{lem:Rm-to-an} to obtain the basic recursion for $(a_n)$.
+
+\begin{lemma}\label{lem:basic-recursion}
+Fix $0<\eta<2506/4175$ and let $\delta=6681/4175-\eta>1$. Then there exist constants $C_1\ge 2$
+and $N_0$ (depending only on $\eta$) such that for all $n\ge N_0$,
+\begin{equation}\label{eq:recursion}
+a_n\ \le\ C_1\, n^{1/\delta}\, a_{\lceil C_1\,n^{1/\delta}\rceil}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Let $c,m_0$ be as in Proposition~\ref{prop:Rm-lower-bloom}. For $N$ large, set
+\[
+m_1:=\left\lceil (N/c)^{1/\delta}\right\rceil.
+\]
+Then $m_1\ge m_0$ and $c m_1^\delta \ge N$, so $|\mathcal R_{m_1}|\ge N$. By Lemma~\ref{lem:Rm-to-an},
+\[
+a_{N+2}\le s_{m_1}.
+\]
+Since $a_i\le a_{m_1}$ for $1\le i\le m_1$, we have $s_{m_1}\le m_1 a_{m_1}$, hence
+\[
+a_{N+2}\le m_1 a_{m_1}.
+\]
+Moreover, for $N$ large enough,
+\[
+m_1=\left\lceil (N/c)^{1/\delta}\right\rceil \le 2c^{-1/\delta}N^{1/\delta}.
+\]
+Set
+\[
+C_1:=\max\{2,\,2c^{-1/\delta}\}.
+\]
+Using the monotonicity of $(a_n)$, we obtain
+\[
+a_{N+2}\le C_1 N^{1/\delta} a_{\lceil C_1 N^{1/\delta}\rceil}
+\]
+for all sufficiently large $N$.
+
+Now replace $N$ by $n-2$. For all sufficiently large $n$,
+\[
+a_n \le C_1 (n-2)^{1/\delta} a_{\lceil C_1 (n-2)^{1/\delta}\rceil}
+\le C_1 n^{1/\delta} a_{\lceil C_1 n^{1/\delta}\rceil}.
+\]
+This is \eqref{eq:recursion} after renaming the lower threshold as $N_0$.
+\end{proof}
+
+
+
+\subsection{Iteration and the final exponent}
+The basic recursion from Lemma~\ref{lem:basic-recursion} can now be iterated. The next lemma shows that any nondecreasing sequence satisfying such a recursion must obey a polynomial upper bound, up to a logarithmic factor.
+\begin{lemma}\label{lem:iterate-recursion}
+Let $(a_n)$ be nondecreasing and suppose there exist constants $C_1\ge 2$, $\alpha\in(0,1)$ and
+$N_0$ such that
+\[
+a_n \le C_1\, n^\alpha\, a_{\lceil C_1 n^\alpha\rceil}
+\qquad(n\ge N_0).
+\]
+Then there exist constants $B,C_2>0$ such that for all $n\ge 3$,
+\[
+a_n \le C_2\, n^{\alpha/(1-\alpha)}\,(\log n)^{B}.
+\]
+\end{lemma}
+
+\begin{proof}
+Enlarge $N_0$ if necessary so that
+\[
+\lceil C_1 x^\alpha\rceil \le 2C_1 x^\alpha \le x-1
+\qquad(x\ge N_0),
+\]
+and also
+\[
+\frac{\log(2C_1)}{1-\alpha}\le \frac12\log N_0.
+\]
+
+
+Fix $n> N_0$, and define
+\[
+\widetilde{n}_0:=n,\qquad \widetilde{n}_{j+1}:=\lceil C_1 \widetilde{n}_j^\alpha\rceil \quad (j\ge 0)
+\]
+for as long as $\widetilde{n}_j>N_0$. Since $\widetilde{n}_{j+1}\le \widetilde{n}_j-1$ whenever $\widetilde{n}_j\ge N_0$, the positive integer sequence $(\widetilde{n}_j)$
+strictly decreases until it first reaches the interval $[1,N_0]$. Hence there exists
+a minimal $t=t(n)$ such that $\widetilde{n}_t\le N_0$.
+
+
+
+
+Repeatedly applying the assumed recursion gives
+\[
+a_n\ \le\ \Bigl(\prod_{j=0}^{t-1} C_1 \widetilde{n}_j^\alpha\Bigr)\, a_{\widetilde{n}_t}.
+\]
+Since $\widetilde{n}_t\le N_0$, we have
+\[
+a_{\widetilde{n}_t}\le C_0:=\max_{1\le r\le N_0} a_r.
+\]
+Also, from \(\widetilde{n}_{j+1}\le 2C_1 \widetilde{n}_j^\alpha\) we obtain by induction
+\[
+\widetilde{n}_j\ \le\ (2C_1)^{1+\alpha+\cdots+\alpha^{j-1}}\, n^{\alpha^j}
+\ \le\ (2C_1)^{1/(1-\alpha)}\, n^{\alpha^j}.
+\]
+Therefore
+\[
+\prod_{j=0}^{t-1} \widetilde{n}_j^\alpha
+\le (2C_1)^{\alpha t/(1-\alpha)}\,
+n^{\alpha+\alpha^2+\cdots+\alpha^t}
+\le (2C_1)^{\alpha t/(1-\alpha)}\, n^{\alpha/(1-\alpha)}.
+\]
+Combining the previous estimates yields
+\[
+a_n\ \le\ C_0\, C_1^{\,t}\,(2C_1)^{\alpha t/(1-\alpha)}\, n^{\alpha/(1-\alpha)}.
+\]
+
+
+It remains to bound $t$. Write \(x_j:=\log \widetilde{n}_j\). Since
+\[
+\widetilde{n}_{j+1}\le 2C_1 \widetilde{n}_j^\alpha,
+\]
+we have
+\[
+x_{j+1}\le \alpha x_j+\log(2C_1).
+\]
+Iterating this inequality gives
+\[
+x_j\le \alpha^j\log n+\frac{\log(2C_1)}{1-\alpha}.
+\]
+By the choice of $N_0$,
+\[
+\frac{\log(2C_1)}{1-\alpha}\le \frac12\log N_0.
+\]
+Hence, whenever
+\[
+\alpha^j\log n\le \frac12\log N_0,
+\]
+we obtain \(x_j\le \log N_0\), and therefore $\widetilde{n}_j\le N_0$. Thus $t$ is at most the least integer $j$ such that
+\[
+\alpha^j\log n\le \frac12\log N_0.
+\]
+Equivalently, since $0<\alpha<1$,
+\[
+j\ge \frac{\log\log n-\log\bigl(\frac12\log N_0\bigr)}{\log(1/\alpha)}.
+\]It follows that
+\[
+t\ll \log\log n.
+\]
+Consequently,
+\[
+C_1^t(2C_1)^{\alpha t/(1-\alpha)}=(\log n)^{O(1)},
+\]
+and the claimed bound follows for all $n> N_0$. Enlarging $C_2$ covers the finitely many
+values $3\le n\le N_0$.
+\end{proof}
+
+We are now ready to present the following.
+
+\begin{proof}[Proof of Theorem~\ref{thm:upper-final}]
+Fix $\varepsilon>0$. Choose $0<\eta<2506/4175$ so small that
+\begin{equation}\label{eq:choose-eta}
+\frac{1}{(6681/4175-\eta)-1}\ \le\ \frac{4175}{2506}+\frac{\varepsilon}{2}.
+\end{equation}
+Set $\delta=6681/4175-\eta$ and $\alpha=1/\delta\in(0,1)$. By Lemma~\ref{lem:basic-recursion}, there exist constants $C_1\ge 2$ and $N_0$ such that
+\[
+a_n \le C_1\, n^{\alpha}\, a_{\lceil C_1 n^{\alpha}\rceil}
+\qquad(n\ge N_0).
+\]
+Applying Lemma~\ref{lem:iterate-recursion} yields constants $B,C_2>0$ such that
+\[
+a_n \le C_2\, n^{\alpha/(1-\alpha)}\,(\log n)^{B}
+\qquad(n\ge 3).
+\]
+Since $\alpha/(1-\alpha)=1/(\delta-1)$, the choice \eqref{eq:choose-eta} gives
+\[
+n^{\alpha/(1-\alpha)}\ \le\ n^{4175/2506+\varepsilon/2}.
+\]
+Finally, $(\log n)^B\le n^{\varepsilon/2}$ for all sufficiently large $n$, so
+\[
+a_n\ \le\ C_\varepsilon\, n^{4175/2506+\varepsilon}
+\]
+for all large $n$, and we adjust $C_\varepsilon$ to cover the finitely many smaller $n$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+\section{Concluding remarks}\label{sec:conclude}
+
+For the classical Hofstadter consecutive-sum sequence~\eqref{eq:hof}, the present paper
+provides both qualitative and quantitative progress on Problem~\ref{prob:423}. On the qualitative side, Theorem~\ref{thm:quantitative-lower-classical} shows that
+\[
+a_n=n+\Omega(\log\log n),
+\]
+so the sequence omits infinitely many positive integers. On the quantitative side, Theorem~\ref{thm:upper-final} proves that for every $\varepsilon>0$,
+\[
+a_n\ll_\varepsilon n^{4175/2506+\varepsilon}.
+\]
+In particular, the sequence~\eqref{eq:hof} has polynomial growth.
+
+There remains, however, a substantial gap between these two conclusions, and the upper bound above is unlikely to be optimal. It is worth noting that, assuming the conjectural near-quadratic lower bound \(|A-A|\gg |A|^{2-o(1)}\) for every finite convex set $A$---a conjecture often attributed to Erd\H{o}s and Hegyv\'ari (see~\cite[p.~2]{BFR2026})---the method of Section~\ref{sec:upper-bound} would yield \(a_n \le n^{1+o(1)}\). However, even under this conjectural input, the present iteration argument still does not seem to give the stronger estimate \(a_n\ll n\).
+
+The available numerical evidence suggests that the true growth is much closer to linear. Writing
+\[
+b_n:=a_n-n,
+\]
+it is natural to ask for the true order of magnitude of $b_n$. To this end, we computed $b_n$ for
+$1\le n\le 30000$ and plotted the normalized quantities $b_n/n^{1/k}$ for $k=5,4,3,2$; see
+Figure~\ref{fig:bn-ratios}. The ratio $b_n/n^{1/2}$ appears to decrease with $n$, whereas
+$b_n/n^{1/5}$ appears to increase, which is consistent with a power-law heuristic of the form
+\[
+b_n=\Theta\bigl(n^{\alpha+o(1)}\bigr)\qquad(n\to\infty)
+\]
+for some exponent $\alpha$ satisfying $1/5<\alpha<1/2$. Among these plots, the curve $b_n/n^{1/3}$ appears comparatively flat on the computed range, suggesting that $\alpha$ might be close to $1/3$, although it is not clear how representative this behavior is asymptotically.
+
+
+
+
+
+
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\linewidth]{423_Figure.png}
+  \caption{Numerical data for sequence~\eqref{eq:hof}: the top panel shows $b_n=a_n-n$
+  (on a logarithmic $n$-axis), and the remaining panels plot the ratios $b_n/n^{1/k}$ for
+  $k=5,4,3,2$ over $1\le n\le 30000$.}
+  \label{fig:bn-ratios}
+\end{figure}
+
+
+
+
+
+
+\bigskip
+
+
+\noindent\textbf{Acknowledgments.}
+An earlier version of this paper, containing only the result \(a_n = n+\omega(1)\), appeared as a short note in the comments section of the \emph{Erd\H{o}s Problems} website~\cite{EP}. Matthew Bolan also independently obtained the qualitative result that the classical sequence omits infinitely many positive integers; see again the comments section of the \emph{Erd\H{o}s Problems} website~\cite{EP}. We are grateful to Ingo Alth\"ofer for suggesting the generalization of Conjecture~\ref{conj:missing} to the setting of Definition~\ref{def:general}. We thank Yann Bugeaud for pointing out that the method in our proof of \(a_n = n+\omega(1)\) can in fact be strengthened to yield \(a_n = n+\Omega(\log\log n)\). We also thank Norbert Hegyv\'ari for sharing the papers~\cite{Beker2024,Hegyvari1986,Tao2026} on consecutive sums. Finally, we thank Boris Alexeev and Wolfram Bernhardt for computing and sharing the numerical data posted in the comments section of the \emph{Erd\H{o}s Problems} website~\cite{EP}.
+
+
+
+\medskip
+
+{\noindent\bf Declaration of AI usage.}
+An AI assistant was used only during the brainstorming phase related to Theorem~\ref{thm:upper-final}, and to draft the Python code used to generate Figure~\ref{fig:bn-ratios}. Apart from this limited assistance, all mathematical arguments, proofs, and the writing of this paper were carried out by the author.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{thebibliography}{99}
+
+
+\bibitem{Beker2024}
+A.~Beker,
+On a problem of Erd\H{o}s and Graham about consecutive sums in strictly increasing sequences,
+\emph{Bull. London Math. Soc.} \textbf{56} (2024), 2749--2759.
+
+
+
+\bibitem{Beukers1981}
+F.~Beukers,
+On the generalized Ramanujan--Nagell equation I,
+\emph{Acta Arith.} \textbf{38} (1981), no.~4, 389--410.
+
+
+\bibitem{Blo25}
+T.~F.~Bloom, Control and its applications in additive combinatorics,
+\emph{arXiv preprint} arXiv:2501.09470v1, 2025.
+
+\bibitem{EP}
+T.~F.~Bloom, Erd\H{o}s Problem \#423,
+\href{https://www.erdosproblems.com/423}{https://www.erdosproblems.com/423}, accessed 2026-02-28.
+
+\bibitem{BFR2026}
+T.~F.~Bloom, J.~F\"uhrer, and O.~Roche-Newton,
+Additive Structure in Convex Sets,
+\emph{Combinatorica} \textbf{46} (2026), Article~7.
+
+
+\bibitem{Er77c}
+P.~Erd\H{o}s,
+Problems and results on combinatorial number theory, III,
+in \emph{Number Theory Day (Proc.\ Conf., Rockefeller Univ., New York, 1976)},
+Lecture Notes in Math., Vol.~626, Springer, Berlin, 1977, 43--72.
+
+\bibitem{ErGr80}
+P.~Erd\H{o}s and R.~L.~Graham,
+\emph{Old and New Problems and Results in Combinatorial Number Theory},
+Monographies de L'Enseignement Math\'ematique, Vol.~28,
+Universit\'e de Gen\`eve, L'Enseignement Math\'ematique, Geneva, 1980.
+
+\bibitem{Gu04}
+R.~K.~Guy,
+\emph{Unsolved Problems in Number Theory},
+3rd ed., Problem Books in Mathematics, Springer, New York, 2004.
+
+
+\bibitem{Hegyvari1986}
+N.~Hegyv\'ari,
+On consecutive sums in sequences,
+\emph{Acta Math. Hung.} \textbf{48} (1986), 193--200.
+
+
+\bibitem{SchinzelTijdeman1976}
+A.~Schinzel and R.~Tijdeman,
+On the equation $y^m=P(x)$,
+\emph{Acta Arith.} \textbf{31} (1976), 199--204.
+
+
+
+\bibitem{OEIS-A005243} N.~Sloane and The OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences},
+Sequence A005243,
+\url{https://oeis.org/A005243},
+accessed 2026-02-28.
+
+\bibitem{Tao2026}
+T.~Tao,
+A set that represents all large integers multiple times by consecutive elements,
+preprint, February 23, 2026.
+Available at \url{https://terrytao.wordpress.com/wp-content/uploads/2026/02/erdos-358-1-1.pdf}.
+
+\bibitem{Weisstein-HofstadterSequences}
+E.~W.~Weisstein,
+\emph{Hofstadter Sequences},
+From \emph{MathWorld}---A Wolfram Web Resource,
+\url{https://mathworld.wolfram.com/HofstadterSequences.html},
+accessed 2026-02-28.
+
+\end{thebibliography}
+
+
+
+
+
+\end{document}
